@@ -9,28 +9,38 @@ services:
     ports:
       - "8081:8080"
     depends_on:
-      - db
-  
+      db:
+        condition: service_healthy
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+
   frontend:
     build:
       context: ./client
       dockerfile: Dockerfile
     container_name: bagiratest-frontend
     ports:
-      - 3000:3000
+      - "3000:3000"
+    depends_on:
+      - backend
+  
   db:
     image: postgres:latest
     container_name: bagiratest-db
     restart: always
     environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Bagira1234
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      retries: 5
 
 volumes:
   postgres_data:

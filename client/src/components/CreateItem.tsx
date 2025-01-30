@@ -49,11 +49,11 @@ const CreateItem: React.FC<CreateItemProps> = ({ refreshItems }) => {
       if (!response.ok) {
         throw new Error("Failed to add item");
       }
-
+      
+      refreshItems();
       setNewItem("");
       setError("");
-      refreshItems();
-      alert("Item added successfully!");
+      // alert("Item added successfully!");
     } catch (error: any) {
       setError(error.message || "An unexpected error occurred.");
     } finally {

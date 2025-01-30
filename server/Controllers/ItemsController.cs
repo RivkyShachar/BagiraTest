@@ -19,7 +19,7 @@ public class ItemsController(ApplicationDbContext context) : ControllerBase
     {
         var items = await _context.Items.ToListAsync();
 
-        if (items == null || items.Count == 0)
+        if (items == null)
         {
             return NotFound("No items found.");
         }
