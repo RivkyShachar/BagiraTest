@@ -9,7 +9,7 @@ interface SingleItemProps {
 const SingleItem: React.FC<SingleItemProps> = ({ item, onDelete }) => {
   const deleteItemHandler = async (id: number) => {
     try {
-      const response: Response = await fetch(`https://your-api-url.com/items/${id}`, {
+      const response: Response = await fetch(`http://localhost:8081/api/items/${id}`, {
         method: "DELETE",
       });
 

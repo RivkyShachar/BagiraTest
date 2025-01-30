@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { CreateItemDto } from "../DTOs/createItem.dto";
 
-const CreateItem: React.FC = () => {
+interface CreateItemProps {
+  refreshItems: () => void;
+}
+
+const CreateItem: React.FC<CreateItemProps> = ({ refreshItems }) => {
   const [newItem, setNewItem] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,13 +35,16 @@ const CreateItem: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response: Response = await fetch("https://your-api-url.com/items", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(item),
-      });
+      const response: Response = await fetch(
+        "http://localhost:8081/api/items",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(item),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to add item");
@@ -45,6 +52,7 @@ const CreateItem: React.FC = () => {
 
       setNewItem("");
       setError("");
+      refreshItems();
       alert("Item added successfully!");
     } catch (error: any) {
       setError(error.message || "An unexpected error occurred.");
