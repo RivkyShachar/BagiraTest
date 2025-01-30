@@ -1,6 +1,6 @@
 import React from "react";
-import CreateItem from "./components/CreateItem.tsx";
 import ItemsList from "./components/ItemsList.tsx";
+import CreateItem from "./components/CreateItem.tsx";
 
 const App: React.FC = () => {
   return (
