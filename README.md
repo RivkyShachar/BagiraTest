@@ -1,108 +1,86 @@
-docker compose
 
-version: '3.8'
+# BagiraTest Application
 
-services:
-  backend:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
-    container_name: bagiratest-backend
-    ports:
-      - "8081:8080"
-    depends_on:
-      - db
-  
-  frontend:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    container_name: bagiratest-frontend
-    ports:
-      - 3000:3000
-  db:
-    image: postgres:latest
-    container_name: bagiratest-db
-    restart: always
-    environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Bagira1234
-    ports:
-      - "5434:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+This repository contains a microservices-based application with a backend, frontend, and database using Docker. The backend is built with ASP.NET Core, the frontend uses React, and the database is PostgreSQL.
 
-volumes:
-  postgres_data:
+## Setup Instructions
 
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/RivkyShachar/BagiraTest.git
+   cd BagiraTest
+   ```
 
+2. **Install Docker:**
+   Ensure that Docker is installed on your system. You can download Docker from [here](https://www.docker.com/get-started).
 
-server Dockerfile
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+3. **Docker Compose:**
+   This project uses Docker Compose to manage multiple services (backend, frontend, and database). Docker Compose allows you to define and run multi-container Docker applications.
 
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+## How to Run the Application Locally with Docker
 
+1. **Build and Start the Application:**
 
-# This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["server.csproj", "."]
-RUN dotnet restore "./server.csproj"
-COPY . .
-WORKDIR "/src/."
-RUN dotnet build "./server.csproj" -c $BUILD_CONFIGURATION -o /app/build
+   Run the following command to build the Docker images and start the services defined in `docker-compose.yml`:
+   ```bash
+   docker-compose up --build
+   ```
 
-# This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./server.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+   This command will:
+   - Build the Docker images for the frontend and backend.
+   - Start the PostgreSQL container with the `init.sql` file to set up the database.
+   - Link the backend and frontend containers to the PostgreSQL database.
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "server.dll"]
+2. **Access the Application:**
 
-client Dockerfile
-FROM node:alpine
+   Once the application is up and running, you can access:
+   - **Frontend**: `http://localhost:3000`
+   - **Backend**: `http://localhost:8081`
+   - **PostgreSQL Database**: `localhost:5434`
 
-WORKDIR /app
-COPY package.json .
-RUN npm install
-COPY . .
+   The database connection is set up in the backend to connect to PostgreSQL at the following settings:
+   - **Host**: `db`
+   - **Port**: `5432`
+   - **Username**: `postgres`
+   - **Password**: `Bagira1234`
+   - **Database**: `mydb`
 
-CMD ["npm", "start"]
+3. **Stopping the Application:**
 
+   To stop the running containers, use:
+   ```bash
+   docker-compose down
+   ```
 
-appsettings.json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=db;Port=5432;Database=mydb;Username=postgres;Password=Bagira1234",
-    "CloudConnection": "Host=db;Port=5432;Database=mydb;Username=postgres;Password=Bagira1234"
-  },
-  "AllowedHosts": "*"
-}
+4. **Rebuilding the Containers:**
 
-appsettings.Development.json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  }
-}
+   If you make changes to the application and want to rebuild the Docker containers, use:
+   ```bash
+   docker-compose up --build
+   ```
+
+## Project Structure
+
+- **`docker-compose.yml`**: Defines the Docker services for the backend, frontend, and database.
+- **`server/Dockerfile`**: Dockerfile for building the backend service (ASP.NET Core).
+- **`client/Dockerfile`**: Dockerfile for building the frontend service (React).
+- **`init.sql`**: Initializes the PostgreSQL database when the container starts.
+- **`appsettings.json`**: Configuration file for backend (e.g., database connection strings).
+- **`appsettings.Development.json`**: Configuration file for logging in development mode.
+
+## Notes
+
+- **Backend Logs**: You can view logs for the backend by running:
+  ```bash
+  docker logs -f bagiratest-backend
+  ```
+- **Frontend Logs**: Similarly, you can view frontend logs by running:
+  ```bash
+  docker logs -f bagiratest-frontend
+  ```
+
+## Troubleshooting
+
+- Ensure Docker is running and you have the necessary permissions to run Docker commands.
+- If the database is not initializing, check the `init.sql` file for errors.
+- If there are issues with the backend or frontend not loading, check their respective logs for error messages.
