@@ -1,15 +1,15 @@
-import React from "react";
 import Item from "../Interfaces/item";
 
 interface SingleItemProps {
   item: Item;
   onDelete: (id: number) => void;
 }
+const API_URL = process.env.REACT_APP_API_URL;
 
 const SingleItem: React.FC<SingleItemProps> = ({ item, onDelete }) => {
   const deleteItemHandler = async (id: number) => {
     try {
-      const response: Response = await fetch(`http://localhost:8081/api/items/${id}`, {
+      const response: Response = await fetch(`${API_URL}/items/${id}`, {
         method: "DELETE",
       });
 

@@ -1,5 +1,4 @@
-import React from "react";
-import SingleItem from "./SingleItem.tsx";
+import SingleItem from "./SingleItem";
 import Item from "../Interfaces/item";
 
 interface ItemsListProps {

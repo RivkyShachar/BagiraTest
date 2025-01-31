@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { CreateItemDto } from "../DTOs/createItem.dto";
 
 interface CreateItemProps {
   refreshItems: () => void;
 }
+const API_URL = process.env.REACT_APP_API_URL;
 
 const CreateItem: React.FC<CreateItemProps> = ({ refreshItems }) => {
   const [newItem, setNewItem] = useState<string>("");
@@ -36,7 +37,7 @@ const CreateItem: React.FC<CreateItemProps> = ({ refreshItems }) => {
 
     try {
       const response: Response = await fetch(
-        "http://localhost:8081/api/items",
+        `${API_URL}/items`,
         {
           method: "POST",
           headers: {

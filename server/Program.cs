@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using server.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 var corsPolicy = "AllowAll";
 builder.Services.AddCors(options =>
@@ -15,8 +16,6 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader();
         });
 });
-
-// Add services to the container.
 
 builder.Services.AddControllers();
 var connectionString = builder.Environment.IsDevelopment()

@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
-import ItemsList from "./components/ItemsList.tsx";
-import CreateItem from "./components/CreateItem.tsx";
+import { useState, useEffect, useCallback } from "react";
+import ItemsList from "./components/ItemsList";
+import CreateItem from "./components/CreateItem";
 import Item from "./Interfaces/item";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 const App: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
@@ -11,7 +13,7 @@ const App: React.FC = () => {
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const response: Response = await fetch("http://localhost:8081/api/items");
+      const response: Response = await fetch(`${API_URL}/items`);
       if (!response.ok) {
         throw new Error("Failed to fetch items.");
       }
